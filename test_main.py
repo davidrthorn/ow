@@ -42,7 +42,7 @@ class TestExtractNotes(unittest.TestCase):
     def test_multiline_notes(self):
         data = ["NOTE 1: one", "uno", "eins", "NOTE 2: two", "duo"]
         entry, notes = extract_notes(data)
-        self.assertEqual(["NOTE: one uno eins", "NOTE: two duo"], notes)
+        self.assertEqual(["NOTE 1: one uno eins", "NOTE 2: two duo"], notes)
 
     def test_entry_with_note(self):
         data = [
@@ -91,6 +91,7 @@ class TestLastRowToValues(unittest.TestCase):
         got = last_row_to_values(data)
         self.assertEqual(["of)", "", "", ""], got)
 
+    # Fails because 'December' isn't date parseable by dateutils
     def test_paddable_last_row_third_only(self):
         data = "25 December                "
         got = last_row_to_values(data)
@@ -111,7 +112,7 @@ class TestLastRowToValues(unittest.TestCase):
         got = last_row_to_values(data)
         self.assertEqual(["of)", "", "", ""], got)
 
-    # fails because 1 is date parsable
+    # Fails because 1 is date parsable, which confuses my implementation
     def test_first_column_with_number(self):
         data = "plan 1"
         got = last_row_to_values(data)
@@ -127,6 +128,7 @@ class TestLastRowToValues(unittest.TestCase):
         got = last_row_to_values(data)
         self.assertEqual(["", "", "to 30.8.2026", ""], got)
 
+    # Fails because when there's no lessee, there's no reliable way to pad (that I've found).
     def test_missing_lessee(self):
         data = "4 (part of)                                   20.6.2006"
         got = last_row_to_values(data)
